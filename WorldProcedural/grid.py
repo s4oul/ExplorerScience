@@ -3,10 +3,6 @@ import time
 from random import randrange
 
 
-grid_wall_h = '|'
-grid_wall_v = '_'
-
-
 class Cell:
     x = int(0)
     y = int(0)
@@ -40,6 +36,13 @@ def get_wall_cell(brut_cell: Cell, brut_neighbour: Cell) -> Cell or None:
 
 
 class Grid:
+
+    cell_usless = '.'
+    cell_wall_h = '_'
+    cell_wall_v = '|'
+    cell_coridor = ' '
+    width = 10
+    height = 10
 
     def __init__(self, width: int = 10, height: int = 10):
         self.width = width
@@ -140,23 +143,24 @@ class Grid:
         for line in self.grid:
             if not swap:
                 for i in range(self.width):
-                    line += '.'
-                    line += '_'
+                    line += self.cell_usless
+                    line += self.cell_wall_h
             else:
                 for i in range(self.width):
-                    line += '|'
-                    line += '0'
+                    line += self.cell_wall_v
+                    line += self.cell_usless
                     line[i * 2 + 1] = val
                     val = val + 1
                     if i == self.width - 1:
-                        line += '|'
+                        line += self.cell_wall_v
             swap = False if swap else True
 
     def build(self):
         start = time.time()
-        max_iterate = self.height * self.width * 10000
+        max_iterate = self.height * self.width * 10
         loop = 0
-        # while self.grid[1][1] != self.grid[self.height * 2 - 1][self.width * 2 - 1]:
+        # first cell : self.grid[1][1]
+        # last cell  : self.grid[self.height * 2 - 1][self.width * 2 - 1]:
         while not self.is_unique_number_case():
             if loop >= max_iterate:
                 break
@@ -176,7 +180,7 @@ class Grid:
             val_neighbour = self.get_number(neighbour.y, neighbour.x)
             if val != val_neighbour:
                 wall = get_wall_cell(brut_cell, brut_neighbour)
-                self.grid[wall.y][wall.x] = ' '
+                self.grid[wall.y][wall.x] = self.cell_coridor
                 self.update_case_number__(val, val_neighbour)
 
         end = time.time()
