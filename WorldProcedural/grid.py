@@ -61,8 +61,6 @@ class Grid:
                     line += self.grid[y][x + 1]
             else:
                 for x in range(0, self.width * 2 + 1):
-                    if type(self.grid[y][x]) is int and self.grid[y][x] < 10:
-                        line += ' '
                     line += str(self.grid[y][x])
             line_nb = False if line_nb else True
             lines += f'{line}\n'
