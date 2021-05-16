@@ -24,6 +24,10 @@ if __name__ == '__main__':
 
     grid = Grid(options.width, options.height)
     grid.initialize()
+
+    logging.info('Grille de départ')
     grid.print()
+
+    logging.info('Labyrinthe parfaite')
     grid.build()
 

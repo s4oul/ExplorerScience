@@ -1,3 +1,4 @@
+import logging
 import time
 from random import randrange
 
@@ -19,6 +20,33 @@ class Cell:
         return ss
 
 
+def axe_y_number(y: int) -> int:
+    return y * 2 + 1
+
+
+def axe_x_number(x: int) -> int:
+    return x * 2 + 1
+
+
+def get_wall_cell(brut_cell: Cell, brut_neighbour: Cell) -> Cell:
+    wall = Cell(brut_cell.y, brut_cell.x)
+
+    if brut_cell.y != brut_neighbour.y:
+        if brut_cell.y > brut_neighbour.y:
+            wall.y = wall.y - 1
+        else:
+            wall.y = wall.y + 1
+    elif brut_cell.x != brut_neighbour.x:
+        if brut_cell.x > brut_neighbour.x:
+            wall.x = wall.x - 1
+        else:
+            wall.x = wall.x + 1
+    else:
+        return None
+
+    return wall
+
+
 class Grid:
 
     def __init__(self, width: int = 10, height: int = 10):
@@ -28,6 +56,7 @@ class Grid:
 
     def print(self):
         line_nb = False
+        lines = str()
         for y in range(0, self.height * 2 + 1):
             line = str()
             if not line_nb:
@@ -41,7 +70,61 @@ class Grid:
                         line += ' '
                     line += str(self.grid[y][x])
             line_nb = False if line_nb else True
-            print(line)
+            lines += f'{line}\n'
+        logging.info(
+            f'height:{self.height} * width:{self.width}'
+            f'\n{lines}')
+
+    def get_number(self, y: int, x: int) -> int:
+        return self.grid[axe_y_number(y)][axe_x_number(x)]
+
+    def get_wall(self, y: int, x: int) -> str:
+        if y % 2 == 0:
+            return ''
+        else:
+            return self.grid[y][x]
+
+    def get_cell_neighbour(self, cell: Cell) -> Cell or None:
+        neighbour = Cell(cell.y, cell.x)
+
+        # Une direction (gauche, droite, haut, bas)
+        direction = randrange(1, 5)
+        if direction == 1:
+            neighbour.x = neighbour.x - 1
+        elif direction == 2:
+            neighbour.x = neighbour.x + 1
+        elif direction == 3:
+            neighbour.y = neighbour.y - 1
+        elif direction == 4:
+            neighbour.y = neighbour.y + 1
+
+        # Hors map
+        if neighbour.y >= self.height or neighbour.y < 0:
+            return None
+        if neighbour.x >= self.width or neighbour.x < 0:
+            return None
+
+        return neighbour
+
+    def update_case_number__(self, new_val: int, old_val: int):
+        line_nb = False
+        for y in range(self.height * 2):
+            if line_nb:
+                for x in range(1, self.width * 2 + 1, 2):
+                    if self.grid[y][x] == old_val:
+                        self.grid[y][x] = new_val
+            line_nb = False if line_nb else True
+
+    def is_unique_number_case(self):
+        first_val = self.grid[1][1]
+        line_nb = False
+        for y in range(self.height * 2):
+            if line_nb:
+                for x in range(1, self.width * 2 + 1, 2):
+                    if self.grid[y][x] != first_val:
+                        return False
+            line_nb = False if line_nb else True
+        return True
 
     def initialize(self):
         self.grid = [[] for i in range(self.height * 2 + 1)]
@@ -63,92 +146,12 @@ class Grid:
                         line += '|'
             swap = False if swap else True
 
-    def __axe_y_number__(self, y: int) -> int:
-        if y >= self.height:
-            y = self.height - 1
-        return y * 2 + 1
-
-    def __axe_x_number__(self, x: int) -> int:
-        return x * 2 + 1
-
-    def __get_number(self, y: int, x: int) -> int:
-        return self.grid[self.__axe_y_number__(y)][self.__axe_x_number__(x)]
-
-    def __get_wall(self, y: int, x: int) -> str:
-        if y % 2 == 0:
-            return ''
-        else:
-            return self.grid[y][x]
-
-    def __get_neighbour__(self, cell: Cell) -> Cell or None:
-        neighbour = Cell(cell.y, cell.x)
-        direction = randrange(1, 5)
-        if direction == 1:
-            # left
-            neighbour.x = neighbour.x - 1
-            if neighbour.x < 0:
-                return None
-        elif direction == 2:
-            # right
-            neighbour.x = neighbour.x + 1
-            if neighbour.x >= self.width:
-                return None
-        elif direction == 3:
-            # top
-            neighbour.y = neighbour.y - 1
-            if neighbour.y < 0:
-                return None
-        elif direction == 4:
-            # bottom
-            neighbour.y = neighbour.y + 1
-            if neighbour.y >= self.height:
-                return None
-        return neighbour
-
-    def __get_wall_cell__(self, brut_cell: Cell, brut_neighbour: Cell) -> Cell:
-        wall = Cell(brut_cell.y, brut_cell.x)
-
-        if brut_cell.y != brut_neighbour.y:
-            if brut_cell.y > brut_neighbour.y:
-                wall.y = wall.y - 1
-            else:
-                wall.y = wall.y + 1
-        elif brut_cell.x != brut_neighbour.x:
-            if brut_cell.x > brut_neighbour.x:
-                wall.x = wall.x - 1
-            else:
-                wall.x = wall.x + 1
-        else:
-            return None
-
-        return wall
-
-    def __update_case_number__(self, new_val: int, old_val: int):
-        line_nb = False
-        for y in range(self.height * 2):
-            if line_nb:
-                for x in range(1, self.width * 2 + 1, 2):
-                    if self.grid[y][x] == old_val:
-                        self.grid[y][x] = new_val
-            line_nb = False if line_nb else True
-
-    def __is_unique_number_case__(self):
-        first_val = self.grid[1][1]
-        line_nb = False
-        for y in range(self.height * 2):
-            if line_nb:
-                for x in range(1, self.width * 2 + 1, 2):
-                    if self.grid[y][x] != first_val:
-                        return False
-            line_nb = False if line_nb else True
-        return True
-
     def build(self):
         start = time.time()
         max_iterate = self.height * self.width * 10000
         loop = 0
         # while self.grid[1][1] != self.grid[self.height * 2 - 1][self.width * 2 - 1]:
-        while not self.__is_unique_number_case__():
+        while not self.is_unique_number_case():
             if loop >= max_iterate:
                 break
             loop = loop + 1
@@ -156,24 +159,24 @@ class Grid:
             y = randrange(self.height)
             x = randrange(self.width)
             cell = Cell(y, x)
-            neighbour = self.__get_neighbour__(cell)
+            neighbour = self.get_cell_neighbour(cell)
             if not neighbour:
                 continue
 
-            brut_cell = Cell(self.__axe_y_number__(cell.y), self.__axe_y_number__(cell.x))
-            brut_neighbour = Cell(self.__axe_y_number__(neighbour.y), self.__axe_y_number__(neighbour.x))
+            brut_cell = Cell(axe_y_number(cell.y), axe_x_number(cell.x))
+            brut_neighbour = Cell(axe_y_number(neighbour.y), axe_x_number(neighbour.x))
 
-            val = self.__get_number(cell.y, cell.x)
-            val_neighbour = self.__get_number(neighbour.y, neighbour.x)
+            val = self.get_number(cell.y, cell.x)
+            val_neighbour = self.get_number(neighbour.y, neighbour.x)
             if val != val_neighbour:
-                wall = self.__get_wall_cell__(brut_cell, brut_neighbour)
+                wall = get_wall_cell(brut_cell, brut_neighbour)
                 self.grid[wall.y][wall.x] = ' '
-                self.__update_case_number__(val, val_neighbour)
+                self.update_case_number__(val, val_neighbour)
 
         end = time.time()
         self.print()
         if loop == max_iterate:
-            print(f'ending forced')
+            logging.info('ending forced')
         else:
-            print(f'Iterate:{loop} / {max_iterate}')
-            print(f'Time:{end - start} seconds')
+            logging.info(f'Iterate:{loop} / {max_iterate}')
+            logging.info(f'Time:{end - start} seconds')
