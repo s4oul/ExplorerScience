@@ -20,15 +20,7 @@ class Cell:
         return ss
 
 
-def axe_y_number(y: int) -> int:
-    return y * 2 + 1
-
-
-def axe_x_number(x: int) -> int:
-    return x * 2 + 1
-
-
-def get_wall_cell(brut_cell: Cell, brut_neighbour: Cell) -> Cell:
+def get_wall_cell(brut_cell: Cell, brut_neighbour: Cell) -> Cell or None:
     wall = Cell(brut_cell.y, brut_cell.x)
 
     if brut_cell.y != brut_neighbour.y:
@@ -75,8 +67,22 @@ class Grid:
             f'height:{self.height} * width:{self.width}'
             f'\n{lines}')
 
+    def axe_y_number(self, y: int) -> int:
+        if y >= self.height:
+            y = y - 1
+        elif y < 0:
+            y = 0
+        return y * 2 + 1
+
+    def axe_x_number(self, x: int) -> int:
+        if x >= self.width:
+            x = x - 1
+        elif x < 0:
+            x = 0
+        return x * 2 + 1
+
     def get_number(self, y: int, x: int) -> int:
-        return self.grid[axe_y_number(y)][axe_x_number(x)]
+        return self.grid[self.axe_y_number(y)][self.axe_x_number(x)]
 
     def get_wall(self, y: int, x: int) -> str:
         if y % 2 == 0:
@@ -127,7 +133,7 @@ class Grid:
         return True
 
     def initialize(self):
-        self.grid = [[] for i in range(self.height * 2 + 1)]
+        self.grid = [[] for _ in range(self.height * 2 + 1)]
 
         val = int(0)
         swap = False
@@ -156,15 +162,15 @@ class Grid:
                 break
             loop = loop + 1
 
-            y = randrange(self.height)
-            x = randrange(self.width)
+            y = randrange(0, self.height)
+            x = randrange(0, self.width)
             cell = Cell(y, x)
             neighbour = self.get_cell_neighbour(cell)
             if not neighbour:
                 continue
 
-            brut_cell = Cell(axe_y_number(cell.y), axe_x_number(cell.x))
-            brut_neighbour = Cell(axe_y_number(neighbour.y), axe_x_number(neighbour.x))
+            brut_cell = Cell(self.axe_y_number(cell.y), self.axe_x_number(cell.x))
+            brut_neighbour = Cell(self.axe_y_number(neighbour.y), self.axe_x_number(neighbour.x))
 
             val = self.get_number(cell.y, cell.x)
             val_neighbour = self.get_number(neighbour.y, neighbour.x)
