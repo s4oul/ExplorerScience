@@ -1,6 +1,6 @@
 # Génération Procédurale
 
-Nous allons voir dans cet article comment créer [biome](https://fr.wikipedia.org/wiki/Biome) à l'aide de la génération procédurale. <br>
+Nous allons voir dans cet article comment créer un [biome](https://fr.wikipedia.org/wiki/Biome) à l'aide de la génération procédurale. <br>
 La génération procédurale est présente dans un certains nombres de jeux tel que `Diablo`, `The Binding of Isaac`. <br>
 Le principe étant de créer un monde différent entre chaque itération. <br>
 
