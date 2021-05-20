@@ -105,7 +105,7 @@ soit `b > s + (n + 2 + m + 2) * 2`. <br>
 ### 1) Toutes les cellules seront regroupées par bloc inégalement
 On sépare notre monde en `j` blocs. <br>
 Nous pouvons faire `z / j` pour connaitre la taille de tous les blocs
-mais nous obtiendrons des blocs équilibrés et on ne garantie pas que `(z / j) <= (z / b)`! <br>
+mais nous obtiendrons des blocs équilibrés et on ne garantit pas que `(z / j) <= (z / b)`! <br>
 Il faut donc que `j` prenne pour valeur maximum `z / b`. <br>
 <br>
 
@@ -122,7 +122,7 @@ Résultat possible :
 <img src="https://eskerda.com/wp-content/uploads/2013/12/room2.png" width=300/>
 
 ### 2) Chaque bloc correspond à une zone pouvant accueillir une salle
-À présent que nous avons `j` blocs nous allons créer nos salles à l'intérieure de chaque bloc. <br>
+À présent que nous avons `j` blocs nous allons créer nos salles à l'intérieur de chaque bloc. <br>
 Il faut donc créer des salles dans chaque bloc sans dépasser le bloc ni prendre toute la place ! <br>
 Chaque cellule qui constitue la salle est à présent une cellule accessible par notre joueur. <br>
 Nos blocs de départs :
@@ -143,22 +143,22 @@ Nous pouvons donc à présent représenter notre monde comme ceci :
 Il nous reste plus qu'à rendre accessible toutes les salles ! <br>
 <br>
 Le raccordement des salles s'effectue par des lignes droites ou des coudes (en angle droit).<br>
-Il est important de s'assurer que tous les salles soient reliée, aucune ne doit être orpheline et il ne doit
-pas exister de groupe isoler, toutes salle doit être accessible si un parcours entièrement le monde.<br>
+Il est important de s'assurer que toutes les salles soient reliée, aucune ne doit être orpheline et il ne doit
+pas exister de groupe isolé, toutes les salles doivent être accessibles si un parcours entièrement le monde.<br>
 <br>
 Pour cela nous allons utiliser la structure de donnée `Union-Find`,
-nous effectuerons la même méthode que la création d'un labyrinthe parfaite afin d'assurer que toutes les salles soient accessible.<br>
+nous effectuerons la même méthode que la création d'un labyrinthe parfait afin d'assurer que toutes les salles soient accessible.<br>
 Soit :
 * Nous allons donner un numéro unique à chaque salle.
 * À chaque fois qu'un lien entre deux salles ou plusieurs se créer elles acquièrent le même numéro.
 
 Une fois que toutes les salles ont le même numéro nous obtenons :
 <br>
-<img src="https://cdn.tutsplus.com/cdn-cgi/image/width=1200/gamedev/uploads/2013/10/Binary_Space_Partitioning_for_Maps_Gamedev_Screen-04.jpg" width=300>
+<img src="https://cdn.tutsplus.com/cdn-cgi/image/width=1200/gamedev/uploads/2013/10/Binary_Space_Partitioning_for_Maps_Gamedev_Screen-04.jpg" width=300/>
 <br>
 
 
-## Sources Références
+## Sources
 * [Modélisation Mathématique de labyrinthe](https://fr.wikipedia.org/wiki/Mod%C3%A9lisation_math%C3%A9matique_de_labyrinthe)
 * [Algorithme de Kruskal](https://fr.wikipedia.org/wiki/Algorithme_de_Kruskal)
 * [biome](https://fr.wikipedia.org/wiki/Biome)
