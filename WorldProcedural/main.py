@@ -49,5 +49,5 @@ if __name__ == '__main__':
         bsp = BSP(options.number_rooms, options.height, options.width)
         logging.info('Building BSP')
         bsp.build()
-        bsp.print()
+        #bsp.print()
 

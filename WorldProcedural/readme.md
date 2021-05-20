@@ -75,54 +75,55 @@ python3 main.py --type=labyrinthe --width=10 --height=10
 
 ## Un Monde De Salles
 Nous allons voir comment créer un monde contenant un nombre fixe de salle accessible.
-Cette technique est présente dans un certains nombres de jeux tel que `Diablo`, `The Binding of Isaac`. <br>
+Cette technique est présente dans un certains nombres de jeux tel que `Diablo`, `Path of Exile`. <br>
 Si vous souhaitez générer une carte aléatoire, il existe toutes sortes de façons de procéder. <br>
-Vous pouvez écrire une logique simple pour créer des rectangles de taille aléatoire à des emplacements aléatoires, <br>
-mais cela peut vous laisser avec des cartes pleines de pièces qui se chevauchent, sont groupées ou étrangement espacées. <br>
+Vous pouvez écrire une logique simple pour créer des rectangles de taille aléatoire à des emplacements aléatoires,
+mais cela peut vous laisser avec des cartes pleines de pièces qui se chevauchent, sont groupées, orphelines ou étrangement espacées. <br>
 Cela rend également un peu plus difficile la connexion des chambres les unes aux autres et de s'assurer qu'il n'y a pas de chambres orphelines. <br>
 <br>
 Avec la [partition binaire de l'espace](https://fr.wikipedia.org/wiki/Partition_binaire_de_l%27espace)
 plus connue sous le nom de `BSP (Binary space partitioning)`, vous pouvez garantir des pièces plus uniformément espacées,
-tout en vous assurant de pouvoir connecter toutes les pièces ensemble.
+tout en vous assurant de pouvoir connecter toutes les pièces. <br>
+
 
 ### Théorie
-
 ***Base*** : <br>
-Le monde se compose de `x` colonnes et `y` lignes forment `z = x * y cellules`. <br>
-Une salle prend `n` colonnes et `m` lignes. <br>
-Une salle à une taille minimum de `n=2` et `m=2`, formant donc un carré de `4 cellules`. <br>
-Un bloc est composé d'une salle plus des cellules forment une bordure, soit `b = 4 + (n * 2 + m * 2) + 4` `(salle + contour + coins)`. <br>
-Chaque cellule est une case inaccessible par le joueur par défaut. <br>
-
+Le monde se compose de `x` colonnes et `y` lignes formant un ___monde___ `z` de ___cellules___ soit `x * y`. <br>
+Chaque cellule est inaccessible par le joueur par défaut. <br>
+Une ___salle___ prend `n` colonnes et `m` lignes. <br>
+Une salle `s` à une taille minimum de `2` colonnes et `2` lignes,
+plus ces ___bordures___ formant donc un carré de `(n + 2) * (m + 2)` cellules. <br>
+Un ___chemin___ `c` est un ensemble de cellules permettant la liaison entre deux salles. <br>
+Un ___bloc___ `b` contient une salle, des cellules, un chemin et des ___cellules___ inaccessible,
+soit `b > s + (n + 2 + m + 2) * 2`. <br>
 
 ***Étapes*** :
 1) Toutes les cellules seront regroupées par bloc inégalement.
 2) Créer une salle par bloc.
 3) Relié les salles.
 
-***Détails*** : <br>
-### Toutes les cellules seront regroupées par bloc inégalement
-On sépare notre monde en `j` blocs, nous pouvons faire `z / j` pour connaitre la taille de tous les blocs
-mais nous obtiendrons des blocs équilibrés ! <br>
-Il faut donc diviser `z` par `j` mais de manière inégale.<br>
+### 1) Toutes les cellules seront regroupées par bloc inégalement
+On sépare notre monde en `j` blocs. <br>
+Nous pouvons faire `z / j` pour connaitre la taille de tous les blocs
+mais nous obtiendrons des blocs équilibrés et on ne garantie pas que `(z / j) <= (z / b)`! <br>
+Il faut donc que `j` prenne pour valeur maximum `z / b`. <br>
+<br>
 
-Pour cela ***....arbre....***
-
+On va donc diviser notre monde en plusieurs bloc de manière inégale ! <br>
+Exemple : <br>
 <img src="https://i.stack.imgur.com/Kdgah.jpg" width=300/>
 <img src="https://i.stack.imgur.com/mDGjA.jpg" width=300/>
-
-La taille minimum des salles doit peut-être respecter sinon nous allons créer des blocs bien trop petit ou trop étroit !
-Il est évidement possible de séparer le monde en plus grande nombre de blocs, tout dépend de `b`.
-
-Ce qui nous donnerez :
 <br>
-<img src="https://eskerda.com/wp-content/uploads/2013/12/ugly.png" width=300>
-<img src="https://eskerda.com/wp-content/uploads/2013/12/not_bad.png" width=300>
+
+La ___taille minimum___ des salles doit être ***respecté*** sinon nous allons créer des blocs bien trop étroit. <br>
+Résultat possible :
+<br>
+<img src="https://eskerda.com/wp-content/uploads/2013/12/not_bad.png" width=300/>
 <img src="https://eskerda.com/wp-content/uploads/2013/12/room2.png" width=300/>
 
-### Chaque bloc correspond à une zone pouvant accueillir une salle
-À présent que nous avons `j` bloc nous allons créer nos salles à l'intérieure des blocs. <br>
-Il faut donc créer des salles dans chaque bloc sans dépenser le bloc ni prendre toute la place !<br>
+### 2) Chaque bloc correspond à une zone pouvant accueillir une salle
+À présent que nous avons `j` blocs nous allons créer nos salles à l'intérieure de chaque bloc. <br>
+Il faut donc créer des salles dans chaque bloc sans dépasser le bloc ni prendre toute la place ! <br>
 Chaque cellule qui constitue la salle est à présent une cellule accessible par notre joueur. <br>
 Nos blocs de départs :
 <br>
@@ -138,12 +139,12 @@ Nous pouvons donc à présent représenter notre monde comme ceci :
 <img src="https://cdn.tutsplus.com/cdn-cgi/image/width=1200/gamedev/uploads/2013/10/Binary_Space_Partitioning_for_Maps_Gamedev_Screen-03.jpg" width=300/>
 <br>
 
-### Relié les salles
+### 3) Relié les salles
 Il nous reste plus qu'à rendre accessible toutes les salles ! <br>
 <br>
 Le raccordement des salles s'effectue par des lignes droites ou des coudes (en angle droit).<br>
 Il est important de s'assurer que tous les salles soient reliée, aucune ne doit être orpheline et il ne doit
-pas exister de groupe isoler, toutes salle doit être accessible si un parcours entiérement le monde.<br>
+pas exister de groupe isoler, toutes salle doit être accessible si un parcours entièrement le monde.<br>
 <br>
 Pour cela nous allons utiliser la structure de donnée `Union-Find`,
 nous effectuerons la même méthode que la création d'un labyrinthe parfaite afin d'assurer que toutes les salles soient accessible.<br>
