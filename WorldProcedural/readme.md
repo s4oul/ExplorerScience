@@ -1,9 +1,9 @@
 # Génération Procédurale
-Nous allons voir dans cet article comment créer un [biome](https://fr.wikipedia.org/wiki/Biome)
+Nous allons voir dans cet article comment créer un environnement aléatoire
 à l'aide de la [génération procédurale](https://fr.wikipedia.org/wiki/G%C3%A9n%C3%A9ration_proc%C3%A9durale). <br>
 Le principe étant de créer un monde différent entre chaque itération. <br>
 
-Dans cet article nous allons exposer les méthodes utilisée pour la création de biomes. <br>
+<br>
 Pour cela nous allons partir du postulat que notre monde doit :
 * Avoir des chemins reliant `x` points.
 * Avoir des bordures pour limiter la zone explorable.
@@ -161,7 +161,6 @@ Une fois que toutes les salles ont le même numéro nous obtenons :
 ## Sources
 * [Modélisation Mathématique de labyrinthe](https://fr.wikipedia.org/wiki/Mod%C3%A9lisation_math%C3%A9matique_de_labyrinthe)
 * [Algorithme de Kruskal](https://fr.wikipedia.org/wiki/Algorithme_de_Kruskal)
-* [biome](https://fr.wikipedia.org/wiki/Biome)
 * [Génération Procédurale](https://fr.wikipedia.org/wiki/G%C3%A9n%C3%A9ration_proc%C3%A9durale)
 * [Partition binaire de l'espace](https://fr.wikipedia.org/wiki/Partition_binaire_de_l%27espace)
 * [Démo BPS Dungeon](https://eskerda.com/bsp-dungeon-generation/)
